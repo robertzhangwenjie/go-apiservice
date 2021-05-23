@@ -1,0 +1,4 @@
+*.log
+vcs.xml
+modules.xml
+*.iml
