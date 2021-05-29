@@ -1,30 +1,73 @@
 package logging
 
-import (
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
-)
+type logger interface {
+	Info(args ...interface{})
+	Infof(format string, args ...interface{})
+	Infow(msg string, keysAndValues ...interface{})
 
-var Logger *zap.SugaredLogger
+	Warn(args ...interface{})
+	Warnf(format string, args ...interface{})
+	Warnw(msg string, keysAndValues ...interface{})
 
-func InitLogger() {
-	// 自定义logger cfg
-	cfg := zap.NewProductionConfig()
-	// 日志级别
-	//cfg.Level = zap.NewAtomicLevelAt(zapcore.InfoLevel)
-	// 自定义消息的编码配置
-	encoderConfig := zap.NewProductionEncoderConfig()
-	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	Error(args ...interface{})
+	Errorf(format string, args ...interface{})
+	Errorw(msg string, keysAndValues ...interface{})
 
-	cfg.Encoding = "json"
-	cfg.OutputPaths = []string{
-		"stderr",
-		"user.log",
-	}
-	cfg.EncoderConfig = encoderConfig
-	logger, _ := cfg.Build()
+	Fatal(args ...interface{})
+	Fatalf(format string, args ...interface{})
+	Fatalw(msg string, keysAndValues ...interface{})
+}
 
-	// 使用自定义的logger替换内置logger
-	zap.ReplaceGlobals(logger)
-	Logger = zap.S()
+type Logger struct {
+	logger
+}
+
+//global logger
+var gLogger *Logger
+
+func Infof(format string, args ...interface{}) {
+	gLogger.Infof(format, args...)
+}
+
+func Info(args ...interface{}) {
+	gLogger.Info(args...)
+}
+
+func Infow(msg string, keysAndValues ...interface{}) {
+	gLogger.Infow(msg, keysAndValues...)
+}
+
+func Warn(args ...interface{}) {
+	gLogger.Warn(args...)
+}
+
+func Warnf(format string, args ...interface{}) {
+	gLogger.Warnf(format, args...)
+}
+func Warnw(msg string, keysAndValues ...interface{}) {
+	gLogger.Infow(msg, keysAndValues...)
+}
+
+func Errorw(msg string, keysAndValues ...interface{}) {
+	gLogger.Infow(msg, keysAndValues...)
+}
+
+func Error(args ...interface{}) {
+	gLogger.Error(args...)
+}
+
+func Errorf(format string, args ...interface{}) {
+	gLogger.Errorf(format, args...)
+}
+
+func Fatal(args ...interface{}) {
+	gLogger.Fatal(args...)
+}
+
+func Fatalf(format string, args ...interface{}) {
+	gLogger.Fatalf(format, args...)
+}
+
+func Fatalw(msg string, keysAndValues ...interface{}) {
+	gLogger.Infow(msg, keysAndValues...)
 }
